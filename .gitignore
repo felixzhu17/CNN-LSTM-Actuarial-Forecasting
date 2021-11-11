@@ -1,0 +1,10 @@
+*.csv
+*.json
+*.pkl
+Tuning/
+archive/
+archive_results/
+test/
+*.tex
+*.docx
+*.png
