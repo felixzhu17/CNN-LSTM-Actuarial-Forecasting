@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from .data_methods import prepare_results, split_Y, linear_error
 
 
-def get_NN_results(model, data, val_steps, test_steps, look_back, data_info, batch_size, epochs, executions=3, error_function=linear_error, data_name='transformed_data'):
+def get_NN_results(model, data, val_steps, test_steps, look_back, data_info, batch_size, epochs, executions=5, error_function=linear_error, data_name='transformed_data'):
 
     model.save_weights('temp.h5')  # Stores the weights
 
@@ -73,6 +73,8 @@ def get_NN_results(model, data, val_steps, test_steps, look_back, data_info, bat
 
     return output
 
+def get_model_name(end_year, target_variable, frequency, output_steps, look_back_years, remove_outlier, val_years, number_of_pca):
+    return f"1960-{end_year}-{target_variable}-{frequency}-{output_steps}-AHEAD-{look_back_years}-LOOKBACK-{remove_outlier}-OUTLIER-{val_years}-VAL-{number_of_pca}-PCA"
 
 def visualize_loss(history, title):
     loss = history.history["loss"]

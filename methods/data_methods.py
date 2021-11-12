@@ -53,7 +53,7 @@ def prepare_model_data(window, X_variables: list, Y_variables: list,
 
 
 def create_principal_components(window, val_steps, test_steps):
-    '''Create PCA from dataset (window) based on Stock and Watson (data_description)'''
+    '''Create PCA from dataset (window)'''
 
     pca_data = window
 
