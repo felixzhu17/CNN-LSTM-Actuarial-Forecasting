@@ -23,13 +23,12 @@ def get_residual_quantiles(NN_results):
         return {k: quantile(v, quant) for k, v in residuals.items()}
 
     residual_quantiles = {0.4: {'lower': get_quantile(0.15), 'upper': get_quantile(0.85)},
-                        0.1: {'lower': get_quantile(0.05), 'upper': get_quantile(0.95)},
-                        0.05: {'lower': get_quantile(0.025), 'upper': get_quantile(0.975)},
-                        0.01: {'lower': get_quantile(0.995), 'upper': get_quantile(0.005)}
-                        }
+                          0.1: {'lower': get_quantile(0.05), 'upper': get_quantile(0.95)},
+                          0.05: {'lower': get_quantile(0.025), 'upper': get_quantile(0.975)},
+                          0.01: {'lower': get_quantile(0.995), 'upper': get_quantile(0.005)}
+                          }
 
     return residual_quantiles
-
 
 
 def get_residuals(NN_results):

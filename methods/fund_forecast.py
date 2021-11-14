@@ -71,10 +71,12 @@ def reverse_transform(results, variables_t, variables_t_1):
 def forecast_fund_value(results, period='After GFC', output_steps=24, interval=False, simulations=5000):
 
     point_fund_info, date_t = get_fund_info(results, period, False)
-    point_fund_value = calculate_fund_value(point_fund_info, output_steps, date_t)
+    point_fund_value = calculate_fund_value(
+        point_fund_info, output_steps, date_t)
 
     actual_fund_info, date_t = get_fund_info(results, period, False, True)
-    actual_fund_value = calculate_fund_value(actual_fund_info, output_steps, date_t)
+    actual_fund_value = calculate_fund_value(
+        actual_fund_info, output_steps, date_t)
 
     fund_intervals = None
 
@@ -97,20 +99,19 @@ def forecast_fund_value(results, period='After GFC', output_steps=24, interval=F
     return {'point_value': point_fund_value['forecast'], 'actual_value': actual_fund_value['forecast'], 'intervals': fund_intervals, 'dates': point_fund_value['dates']}
 
 
-def get_fund_info(results, period='After GFC', use_residual=False, actual = False):
+def get_fund_info(results, period='After GFC', use_residual=False, actual=False):
 
     transformed_fund_info = {i: [] for i in TARGET_VARIABLES}
-    
+
     if period == 'During GFC':
         start_index = 1
 
     else:
         start_index = -1
 
-
     for variable in transformed_fund_info.keys():
         target = [i for i in results if variable in i['variables']
-                   and i['period']['end'] == PERIODS[period] and i['output_steps'] == 24][0]
+                  and i['period']['end'] == PERIODS[period] and i['output_steps'] == 24][0]
 
         if actual:
             values = target['NN_results']['test']['actual_Y']

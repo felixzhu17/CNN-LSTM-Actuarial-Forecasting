@@ -96,11 +96,6 @@ class Data_Prep:
 
         Parameters
         ----------
-        target_variables : list
-            List of target variable names to move to period (t+i)
-
-        output_steps : int
-            The periods ahead to move target variables (i)
 
         '''
         self.remove_NA_data(NA_cutoff)

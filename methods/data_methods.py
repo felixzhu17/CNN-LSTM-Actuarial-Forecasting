@@ -6,8 +6,9 @@ from sklearn.preprocessing import StandardScaler
 
 pd.options.mode.chained_assignment = None
 
+
 def prepare_model_data(window, X_variables: list, Y_variables: list,
-                       val_steps: int, look_back: int, 
+                       val_steps: int, look_back: int,
                        test_steps: int = 1,
                        number_of_pca: int = None, remove_outlier=0.005, target_variables: list = None):
     '''
@@ -15,36 +16,11 @@ def prepare_model_data(window, X_variables: list, Y_variables: list,
 
     Parameters
     ----------
-    window: pandas.core.frame.DataFrame
-        Dataset containing economic variables of period (t) and (t+i)
-
-    target_variables : list
-        List of target variable names of period (t+i)
-
-    output_steps : int
-        The periods ahead of target variables (i)
-
-    val_steps: int
-        The number of training data to use as the validation set
-
-    look_back : int
-        The number of historical periods to include in the explanatory variables (t-i)
-
-    Y_scale: bool
-        Whether to perform MinMax scaling on the target variables
-
-    pca: bool
-        Whether to apply PCA. If false, MinMaxScaler is used
-
-    pca_data_description: pandas.core.frame.DataFrame
-        Stock and Watson data description
-
-    number_of_pca: int
-        Number of PCA to include if pca is True
 
     '''
     window = remove_outliers(window, val_steps, test_steps, remove_outlier)
-    X_data = prepare_X(window, X_variables, val_steps, test_steps, number_of_pca, target_variables)
+    X_data = prepare_X(window, X_variables, val_steps,
+                       test_steps, number_of_pca, target_variables)
     Y_values = window[Y_variables].values
     output = split_data(X_data, Y_values, look_back,
                         len(Y_variables), val_steps, test_steps)
@@ -143,6 +119,7 @@ def split_data(X_values, Y_values, look_back, number_of_variables, val_steps: in
     else:
         return {'train_X': train_X, 'train_Y': train_Y, 'val_X': val_X, 'val_Y': val_Y, 'test_X': test_X, 'test_Y': test_Y}
 
+
 def remove_outliers(data, val_steps, test_steps, remove_outlier=0.005):
     train = data.iloc[:-(val_steps + test_steps)]
     val_test = data.iloc[-(val_steps + test_steps):]
@@ -174,28 +151,15 @@ def split_Y(Y_values, val_steps, test_steps):
 
 def prepare_results(pred, actual, error_function, target_variables, Y_variables):
 
-
     pred_results = {i: [j[count] for j in pred]
                     for count, i in enumerate(Y_variables)}
-    # except:
-    #     pred_results = {i: [j[0][count] for j in pred]
-    #                     for count, i in enumerate(Y_variables)}
+
     actual_values = {i: [j[count] for j in actual]
                      for count, i in enumerate(Y_variables)}
 
     error = error_function(pred, actual)
     error_results = {i: np.mean([j[count] for j in error])
                      for count, i in enumerate(Y_variables)}
-
-    # Convert from numpy to native
-    # try:
-    #     error_results = {k: v.item() for k, v in error_results.items()}
-    #     pred_results = {k: [i.item() for i in v]
-    #                     for k, v in pred_results.items()}
-    #     actual_values = {k: [i.item() for i in v]
-    #                      for k, v in actual_values.items()}
-    # except:
-    #     pass
 
     output = {'error_raw': error_results,
               'pred_Y': pred_results, 'actual_Y': actual_values}
@@ -213,8 +177,6 @@ def prepare_results(pred, actual, error_function, target_variables, Y_variables)
 
     return output
 
+
 def linear_error(pred_y, actual_y):
     return (pred_y - actual_y)**2
-
-
-

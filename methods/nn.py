@@ -73,8 +73,10 @@ def get_NN_results(model, data, val_steps, test_steps, look_back, data_info, bat
 
     return output
 
+
 def get_model_name(end_year, target_variable, frequency, output_steps, look_back_years, remove_outlier, val_years, number_of_pca):
     return f"1960-{end_year}-{target_variable}-{frequency}-{output_steps}-AHEAD-{look_back_years}-LOOKBACK-{remove_outlier}-OUTLIER-{val_years}-VAL-{number_of_pca}-PCA"
+
 
 def visualize_loss(history, title):
     loss = history.history["loss"]

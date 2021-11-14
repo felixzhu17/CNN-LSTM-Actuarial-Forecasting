@@ -3,6 +3,7 @@ from statsmodels.tsa.api import VAR
 from .config import *
 from .data_methods import prepare_results, split_Y, linear_error
 
+
 def get_VAR_results(data_info: dict, max_look_back: int = 15, test_steps: int = 1, output_steps: int = 1, error_function=linear_error, val_steps: int = 0):
     '''
     Fit Vector Autoregressios. 
@@ -11,22 +12,6 @@ def get_VAR_results(data_info: dict, max_look_back: int = 15, test_steps: int = 
 
     Parameters
     ----------
-    data_info: dict
-        Dictionary containing information about the dataset. It must contain:
-        1) raw_data: pandas.core.frame.DataFrame
-                Dataset containing economic variables of period (t) and (t+i)
-        2) target_variables : list
-                List of target variable names of period (t+i)
-
-    look_back : int
-        The number of lags to include in the vector auto-regression
-
-    test_steps: int
-        Number of steps to forecast
-
-    error_function: function(pred,actual)
-        Error function used to evaluate performance of predictions against actual values
-
     '''
     data = VAR_array(data_info, test_steps, val_steps)
 
@@ -124,5 +109,3 @@ def VAR_array(data_info: dict, test_steps: int = 1, val_steps: int = 20):
         i for i in data_info["Y_variables"] if i.endswith(f"(t+1)")]
     values = data_info["transformed_data"][target_variables].values
     return split_Y(values, val_steps, test_steps)
-
-

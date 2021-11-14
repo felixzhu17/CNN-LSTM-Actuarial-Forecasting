@@ -3,9 +3,9 @@ import os
 from .residual_bootstrap import get_prediction_intervals
 from .config import *
 
-plt.rc('font', size=MEDIUM_SIZE)         
-plt.rc('legend', fontsize=MEDIUM_SIZE)    
-plt.rc('figure', titlesize=BIGGER_SIZE)  
+plt.rc('font', size=MEDIUM_SIZE)
+plt.rc('legend', fontsize=MEDIUM_SIZE)
+plt.rc('figure', titlesize=BIGGER_SIZE)
 
 
 def plot_variables(dataset, stationary=True):
@@ -14,7 +14,7 @@ def plot_variables(dataset, stationary=True):
     factors = [i+"(t)" for i in dataset['target_variables']]
     number_of_variables = len(dataset['target_variables'])
     fig, axes = plt.subplots(nrows=number_of_variables,
-                             ncols=1, dpi=120, figsize= (FIG_SIZE[0], FIG_SIZE[1]*number_of_variables))
+                             ncols=1, dpi=120, figsize=(FIG_SIZE[0], FIG_SIZE[1]*number_of_variables))
 
     if stationary == True:
         data_name = 'transformed_data'
@@ -24,26 +24,20 @@ def plot_variables(dataset, stationary=True):
     if number_of_variables == 1:
         data = dataset[data_name][factors[0]]
         axes.plot(data, color='red', linewidth=1)
-        # Decorations
-        axes.set_title(VARIABLES_MAP[names[0]])
-        axes.xaxis.set_ticks_position('none')
-        axes.yaxis.set_ticks_position('none')
-        axes.spines["top"].set_alpha(0)
-        axes.tick_params(labelsize=SMALLEST_SIZE)
-        axes.tick_params(axis='both', which='major', labelsize=SMALL_SIZE)
-        axes.tick_params(axis='both', which='minor', labelsize=SMALL_SIZE)
+        plot_decorations(axes, VARIABLES_MAP[names[0]], legend=False)
 
     else:
 
         for i, ax in enumerate(axes.flatten()):
             data = dataset[data_name][factors[i]]
             ax.plot(data, color='red', linewidth=1)
-            plot_decorations(ax, VARIABLES_MAP[names[i]], legend = False)
-            
+            plot_decorations(ax, VARIABLES_MAP[names[i]], legend=False)
+
     fig.savefig(os.path.join(IMAGE_PATH, 'variable_graph.png'))
     return
 
-def plot_results(result, period, target_variable=None, show_interval=False, alphas=[0.4, 0.1], intervals=None, limit=24, transform_name = True):
+
+def plot_results(result, period, target_variable=None, show_interval=False, alphas=[0.4, 0.1], intervals=None, limit=24, transform_name=True):
 
     variables = list(result[period]['actual_Y'].keys())
     if target_variable:
@@ -68,9 +62,9 @@ def plot_results(result, period, target_variable=None, show_interval=False, alph
 
         if transform_name:
             try:
-                title = VARIABLES_MAP[variables[0][:-5]] + variables[0][-5:] 
+                title = VARIABLES_MAP[variables[0][:-5]] + variables[0][-5:]
             except:
-                title = VARIABLES_MAP[variables[0][:-6]] + variables[0][-6:] 
+                title = VARIABLES_MAP[variables[0][:-6]] + variables[0][-6:]
         else:
             title = variables[0]
 
@@ -94,9 +88,11 @@ def plot_results(result, period, target_variable=None, show_interval=False, alph
 
             if transform_name:
                 try:
-                    title = VARIABLES_MAP[variables[i][:-5]] + variables[i][-5:] 
+                    title = VARIABLES_MAP[variables[i]
+                                          [:-5]] + variables[i][-5:]
                 except:
-                    title = VARIABLES_MAP[variables[i][:-6]] + variables[i][-6:] 
+                    title = VARIABLES_MAP[variables[i]
+                                          [:-6]] + variables[i][-6:]
             else:
                 title = variables[i]
 
@@ -121,15 +117,16 @@ def plot_fund_forecast(fund_forecast, period, alphas=[0.4, 0.1]):
     fig.savefig(os.path.join(IMAGE_PATH, f'fund_{period}.png'))
     return
 
+
 def plot_example_results(best_results_detailed, test_period, alphas=[0.4, 0.1], model='NN'):
 
-    fig, axes = plt.subplots(nrows=4, ncols=1, dpi=120, figsize=(FIG_SIZE[0], FIG_SIZE[1]*4))
-    
+    fig, axes = plt.subplots(nrows=4, ncols=1, dpi=120,
+                             figsize=(FIG_SIZE[0], FIG_SIZE[1]*4))
 
     for i, ax in enumerate(axes.flatten()):
 
         target = [a for a in best_results_detailed if TARGET_VARIABLES[i] in a['variables']
-                   and a['period']['end'] == PERIODS_MAP[test_period] and a['output_steps'] == 1][0]
+                  and a['period']['end'] == PERIODS_MAP[test_period] and a['output_steps'] == 1][0]
 
         if model == 'NN':
             result = target['NN_results']
@@ -143,10 +140,10 @@ def plot_example_results(best_results_detailed, test_period, alphas=[0.4, 0.1], 
         variables = [a for a in variables if TARGET_VARIABLES[i] in a]
 
         ax.plot(result['dates']['test'], result['test']['actual_Y']
-                    [variables[0]], label='Actual', color='orange')
+                [variables[0]], label='Actual', color='orange')
         ax.plot(result['dates']['test'], result['test']['pred_Y']
                 [variables[0]], label='Predict', color='blue')
-     
+
         for alpha, colour in zip(alphas, COLOURS):
             ax.plot(result['dates']['test'], intervals[alpha]['upper']
                     [variables[0]], label=alpha, color=colour, ls='dashed')
@@ -156,18 +153,20 @@ def plot_example_results(best_results_detailed, test_period, alphas=[0.4, 0.1], 
         title = VARIABLES_MAP[variables[0][:-5]] + variables[0][-5:]
         plot_decorations(ax, title)
 
-    fig.savefig(os.path.join(IMAGE_PATH, f'forecast_{test_period}_{model}.png'))
-    
+    fig.savefig(os.path.join(
+        IMAGE_PATH, f'forecast_{test_period}_{model}.png'))
+
     return
 
-def plot_decorations(ax, title, legend = True):
+
+def plot_decorations(ax, title, legend=True):
     ax.set_title(title)
     ax.xaxis.set_ticks_position('none')
     ax.yaxis.set_ticks_position('none')
     ax.spines["top"].set_alpha(0)
     ax.tick_params(labelsize=SMALLEST_SIZE)
-    if legend: ax.legend(loc="upper left")
+    if legend:
+        ax.legend(loc="upper left")
     ax.tick_params(axis='both', which='major', labelsize=SMALL_SIZE)
     ax.tick_params(axis='both', which='minor', labelsize=SMALL_SIZE)
     return
-
