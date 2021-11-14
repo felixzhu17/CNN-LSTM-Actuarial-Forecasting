@@ -16,6 +16,41 @@ from methods.nn import get_model_name
 from methods.model_results import get_best_model_name, best_models
 from methods.config import *
 
+def build_model_no_CNN(hp):
+    model = Sequential()
+    Learning_rate = hp.Choice('learning_rate', values=[1e-3, 1e-5])
+    LSTM_layers = hp.Int("LSTM_layers", 0, 2, step = 1)
+    Dense_layers = hp.Int("Dense_layers", 0, 2, step = 1)
+    Dropout_prob = hp.Float("Dropout_prob", 0.2, 0.5, step = 0.3)
+
+    if LSTM_layers == 0:
+        model.add(LSTM(hp.Int("input_LSTM", min_value = 32, max_value = 192, step=32), batch_input_shape = (BATCH_SIZE, data['train_X'].shape[1], data['train_X'].shape[2])))
+    else:
+        model.add(LSTM(hp.Int("input_LSTM", min_value = 32, max_value = 192, step=32), batch_input_shape = (BATCH_SIZE, data['train_X'].shape[1], data['train_X'].shape[2]), return_sequences=True))
+    model.add(Dropout(Dropout_prob))
+
+    for i in range(LSTM_layers):
+        if i == LSTM_layers - 1:
+            model.add(LSTM(hp.Int(f"LSTM_{i}_units", min_value = 32, max_value = 192, step=32)))
+        else:
+            model.add(LSTM(hp.Int(f"LSTM_{i}_units", min_value = 32, max_value = 192, step=32), return_sequences=True))
+        model.add(Dropout(Dropout_prob))
+
+    for i in range(Dense_layers):
+        model.add(Dense(hp.Int(f"Dense_{i}_units", min_value = 32, max_value = 192, step=32)))
+        model.add(Dropout(Dropout_prob))
+
+    model.add(Dense(len(dataset['Y_variables']), activation='linear'))
+    opt = Adam(learning_rate=Learning_rate, decay=1e-6)
+
+    # Compile model
+    model.compile(
+        loss='mean_squared_error',
+        optimizer=opt
+    )
+
+    return model
+
 def build_model(hp):
     model = Sequential()
     Learning_rate = hp.Choice('learning_rate', values=[1e-3, 1e-5])
