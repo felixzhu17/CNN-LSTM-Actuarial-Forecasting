@@ -5,6 +5,7 @@ from .data_methods import prepare_results, split_Y, linear_error
 
 
 def get_NN_results(model, data, val_steps, test_steps, look_back, data_info, batch_size, epochs, executions=5, error_function=linear_error, data_name='transformed_data'):
+    """Fits the Neural Network on training set and calculates error on training, validation and test set. Best hyperparameters are sorted by validation error in .analyse_hypertune"""
 
     model.save_weights('temp.h5')  # Stores the weights
 

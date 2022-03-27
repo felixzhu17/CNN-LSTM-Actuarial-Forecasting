@@ -13,6 +13,8 @@ def hypertune_best_results(results):
 
                 output = [i for i in results if i['output_steps'] == output_steps and i['period']
                           ['end'] == end_date and target_variable in i['variables']]
+
+                # Sort by validation loss
                 output.sort(key=lambda i: i['val_loss'])
 
                 try:

@@ -93,11 +93,7 @@ class Data_Prep:
         Transform cleaned dataset to a supervised learning dataset with target variable/s of output_steps. 
         Output is a dataset containing all original variables in period (t), with additional columns for target variables in period (t+i) along with supporting information. 
         This dataset is added to the supervised learning dictionary
-
-        Parameters
-        ----------
-
-        '''
+         '''
         self.remove_NA_data(NA_cutoff)
         self.transform_FRED_data()
 

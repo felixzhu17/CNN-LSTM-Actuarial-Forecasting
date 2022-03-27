@@ -9,9 +9,6 @@ def get_VAR_results(data_info: dict, max_look_back: int = 15, test_steps: int = 
     Fit Vector Autoregressios. 
     This model takes variables from the FRED Dataset and uses them in a VAR to predict future observations. 
     The function returns the actual value, predicted value and error of the test observation.  
-
-    Parameters
-    ----------
     '''
     data = VAR_array(data_info, test_steps, val_steps)
 

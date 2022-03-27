@@ -13,10 +13,6 @@ def prepare_model_data(window, X_variables: list, Y_variables: list,
                        number_of_pca: int = None, remove_outlier=0.005, target_variables: list = None):
     '''
     Split explanatory variables and target variables into training, validation and test set with the optionality of scaling variables.
-
-    Parameters
-    ----------
-
     '''
     window = remove_outliers(window, val_steps, test_steps, remove_outlier)
     X_data = prepare_X(window, X_variables, val_steps,

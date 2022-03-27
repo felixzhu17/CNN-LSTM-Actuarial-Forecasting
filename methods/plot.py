@@ -23,14 +23,14 @@ def plot_variables(dataset, stationary=True):
 
     if number_of_variables == 1:
         data = dataset[data_name][factors[0]]
-        axes.plot(data, color='red', linewidth=1)
+        axes.plot(data, color='black', linewidth=1)
         plot_decorations(axes, VARIABLES_MAP[names[0]], legend=False)
 
     else:
 
         for i, ax in enumerate(axes.flatten()):
             data = dataset[data_name][factors[i]]
-            ax.plot(data, color='red', linewidth=1)
+            ax.plot(data, color='black', linewidth=1)
             plot_decorations(ax, VARIABLES_MAP[names[i]], legend=False)
 
     fig.savefig(os.path.join(IMAGE_PATH, 'variable_graph.png'))
