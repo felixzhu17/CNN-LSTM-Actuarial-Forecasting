@@ -3,29 +3,60 @@ from numpy import array, hstack
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from dataclasses import dataclass
 
 pd.options.mode.chained_assignment = None
 
 
-def prepare_model_data(window, X_variables: list, Y_variables: list,
-                       val_steps: int, look_back: int,
-                       test_steps: int = 1,
-                       number_of_pca: int = None, remove_outlier=0.005, target_variables: list = None):
-    '''
+@dataclass
+class BaseResults:
+    error_raw: dict
+    pred_Y: dict
+    actual_Y: dict
+    error: dict
+
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+
+@dataclass
+class Dates:
+    train: list
+    test: list
+    val: list = None
+
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+
+def prepare_model_data(
+    window,
+    X_variables: list,
+    Y_variables: list,
+    val_steps: int,
+    look_back: int,
+    test_steps: int = 1,
+    number_of_pca: int = None,
+    remove_outlier=0.005,
+    target_variables: list = None,
+):
+    """
     Split explanatory variables and target variables into training, validation and test set with the optionality of scaling variables.
-    '''
+    """
     window = remove_outliers(window, val_steps, test_steps, remove_outlier)
-    X_data = prepare_X(window, X_variables, val_steps,
-                       test_steps, number_of_pca, target_variables)
+    X_data = prepare_X(
+        window, X_variables, val_steps, test_steps, number_of_pca, target_variables
+    )
     Y_values = window[Y_variables].values
-    output = split_data(X_data, Y_values, look_back,
-                        len(Y_variables), val_steps, test_steps)
+    output = split_data(
+        X_data, Y_values, look_back, len(Y_variables), val_steps, test_steps
+    )
 
     return output
 
 
 def create_principal_components(window, val_steps, test_steps):
-    '''Create PCA from dataset (window)'''
+    """Create PCA from dataset (window)"""
 
     pca_data = window
 
@@ -34,7 +65,7 @@ def create_principal_components(window, val_steps, test_steps):
     scaler = StandardScaler()
 
     # Fit PCA on Training Only
-    fit_pca_data = pca_data.iloc[:-(val_steps+test_steps)]
+    fit_pca_data = pca_data.iloc[: -(val_steps + test_steps)]
     scaled_fit_pca_data = scaler.fit_transform(fit_pca_data)
     pca = pca.fit(scaled_fit_pca_data)
 
@@ -44,14 +75,20 @@ def create_principal_components(window, val_steps, test_steps):
     pca_dataframe.index = pca_data.index
 
     # Rename Columns
-    pca_dataframe.columns = [
-        "PCA_" + str(i) + "(t)" for i in pca_dataframe.columns]
+    pca_dataframe.columns = ["PCA_" + str(i) + "(t)" for i in pca_dataframe.columns]
 
     return pca_dataframe
 
 
-def prepare_X(window, X_variables: str, val_steps, test_steps, number_of_pca: int = None, target_variables=None):
-    ''' Perform a scaling operation on the dataset (window), either PCA or MinMaxScaler, returning a Numpy Array of variables. '''
+def prepare_X(
+    window,
+    X_variables: str,
+    val_steps,
+    test_steps,
+    number_of_pca: int = None,
+    target_variables=None,
+):
+    """Perform a scaling operation on the dataset (window), either PCA or MinMaxScaler, returning a Numpy Array of variables."""
 
     # Extract variables of time (t) only
     X_data = window[X_variables]
@@ -61,8 +98,7 @@ def prepare_X(window, X_variables: str, val_steps, test_steps, number_of_pca: in
 
     # Create PCA
     if number_of_pca is not None:
-        pca_columns = [
-            "PCA_" + str(i) + "(t)" for i in range(number_of_pca)]
+        pca_columns = ["PCA_" + str(i) + "(t)" for i in range(number_of_pca)]
         X_pca = X_pca[pca_columns]
 
     # Merge back target variables
@@ -71,14 +107,21 @@ def prepare_X(window, X_variables: str, val_steps, test_steps, number_of_pca: in
     X_data = pd.concat([X_pca, X_data], axis=1)
 
     # Scale data again
-    fit_scale_data = X_data.iloc[:-(val_steps+test_steps)]
+    fit_scale_data = X_data.iloc[: -(val_steps + test_steps)]
     X_scaler = X_scaler.fit(fit_scale_data)
     X_scaled = X_scaler.transform(X_data)
     return X_scaled
 
 
-def split_data(X_values, Y_values, look_back, number_of_variables, val_steps: int = 0, test_steps: int = 1):
-    ''' Split explanatory and target Numpy arrays into training, validation and test sets '''
+def split_data(
+    X_values,
+    Y_values,
+    look_back,
+    number_of_variables,
+    val_steps: int = 0,
+    test_steps: int = 1,
+):
+    """Split explanatory and target Numpy arrays into training, validation and test sets"""
 
     sequences = hstack((X_values, Y_values))
 
@@ -90,18 +133,20 @@ def split_data(X_values, Y_values, look_back, number_of_variables, val_steps: in
         if end_ix > len(sequences):
             break
         # gather input and output parts of the pattern
-        seq_x, seq_y = sequences[i:end_ix, :-
-                                 number_of_variables], sequences[end_ix-1, -number_of_variables:]
+        seq_x, seq_y = (
+            sequences[i:end_ix, :-number_of_variables],
+            sequences[end_ix - 1, -number_of_variables:],
+        )
         X.append(seq_x)
         y.append(seq_y)
 
     no_test_X = array(X)[:-test_steps]
     train_X = no_test_X[:-val_steps, :]
-    val_X = no_test_X[(len(no_test_X) - val_steps):, :]
+    val_X = no_test_X[(len(no_test_X) - val_steps) :, :]
 
     no_test_Y = array(y)[:-test_steps]
     train_Y = no_test_Y[:-val_steps]
-    val_Y = no_test_Y[(len(no_test_Y) - val_steps):]
+    val_Y = no_test_Y[(len(no_test_Y) - val_steps) :]
 
     test_X = array(X)[-test_steps:]
     if test_steps == 1:
@@ -110,21 +155,33 @@ def split_data(X_values, Y_values, look_back, number_of_variables, val_steps: in
     test_Y = array(y)[-test_steps:]
 
     if val_steps == 0:
-        return {'train_X': no_test_X, 'train_Y': no_test_Y, 'test_X': test_X, 'test_Y': test_Y}
+        return {
+            "train_X": no_test_X,
+            "train_Y": no_test_Y,
+            "test_X": test_X,
+            "test_Y": test_Y,
+        }
 
     else:
-        return {'train_X': train_X, 'train_Y': train_Y, 'val_X': val_X, 'val_Y': val_Y, 'test_X': test_X, 'test_Y': test_Y}
+        return {
+            "train_X": train_X,
+            "train_Y": train_Y,
+            "val_X": val_X,
+            "val_Y": val_Y,
+            "test_X": test_X,
+            "test_Y": test_Y,
+        }
 
 
 def remove_outliers(data, val_steps, test_steps, remove_outlier=0.005):
-    train = data.iloc[:-(val_steps + test_steps)]
-    val_test = data.iloc[-(val_steps + test_steps):]
+    train = data.iloc[: -(val_steps + test_steps)]
+    val_test = data.iloc[-(val_steps + test_steps) :]
 
     # Remove outlier
     lower_quantile = train.quantile(remove_outlier)
     upper_quantile = train.quantile(1 - remove_outlier)
-    outliers_lower = (train < lower_quantile)
-    outliers_upper = (train > upper_quantile)
+    outliers_lower = train < lower_quantile
+    outliers_upper = train > upper_quantile
     train.mask(outliers_lower, lower_quantile, axis=1, inplace=True)
     train.mask(outliers_upper, upper_quantile, axis=1, inplace=True)
     values = pd.concat([train, val_test])
@@ -136,43 +193,52 @@ def split_Y(Y_values, val_steps, test_steps):
     test_Y = Y_values[-test_steps:]
     no_test_Y = Y_values[:-test_steps]
     train_Y = no_test_Y[:-val_steps]
-    val_Y = no_test_Y[(len(no_test_Y) - val_steps):]
+    val_Y = no_test_Y[(len(no_test_Y) - val_steps) :]
 
     if val_steps == 0:
-        return {'train': no_test_Y, 'test': test_Y}
+        return {"train": no_test_Y, "test": test_Y}
 
     else:
-        return {'train': train_Y, 'val': val_Y, 'test': test_Y}
+        return {"train": train_Y, "val": val_Y, "test": test_Y}
 
 
 def prepare_results(pred, actual, error_function, target_variables, Y_variables):
 
-    pred_results = {i: [j[count] for j in pred]
-                    for count, i in enumerate(Y_variables)}
+    pred_results = {i: [j[count] for j in pred] for count, i in enumerate(Y_variables)}
 
-    actual_values = {i: [j[count] for j in actual]
-                     for count, i in enumerate(Y_variables)}
+    actual_values = {
+        i: [j[count] for j in actual] for count, i in enumerate(Y_variables)
+    }
 
     error = error_function(pred, actual)
-    error_results = {i: np.mean([j[count] for j in error])
-                     for count, i in enumerate(Y_variables)}
+    error_results = {
+        i: np.mean([j[count] for j in error]) for count, i in enumerate(Y_variables)
+    }
 
-    output = {'error_raw': error_results,
-              'pred_Y': pred_results, 'actual_Y': actual_values}
+    output = {
+        "error_raw": error_results,
+        "pred_Y": pred_results,
+        "actual_Y": actual_values,
+    }
 
     # Aggregate error
     error_dict = {i: [] for i in target_variables}
 
     for i in target_variables:
-        for k, v in output['error_raw'].items():
+        for k, v in output["error_raw"].items():
             if k.startswith(i):
                 error_dict[i].append(v)
 
-    aggregate_error = {k: sum(v)/len(v) for k, v in error_dict.items()}
-    output['error'] = aggregate_error
+    aggregate_error = {k: sum(v) / len(v) for k, v in error_dict.items()}
+    output["error"] = aggregate_error
 
-    return output
+    return BaseResults(
+        error_raw=error_results,
+        pred_Y=pred_results,
+        actual_Y=actual_values,
+        error=aggregate_error,
+    )
 
 
 def linear_error(pred_y, actual_y):
-    return (pred_y - actual_y)**2
+    return (pred_y - actual_y) ** 2
