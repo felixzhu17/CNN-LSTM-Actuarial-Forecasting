@@ -1,6 +1,7 @@
 import pickle
 import os
 import sys
+import json
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(FILE_PATH, ".."))
@@ -292,5 +293,5 @@ for end_year in PERIODS_MAP.values():
 
                     results.append(info)
 
-    with open(os.path.join(RESULTS_PATH, f"{end_year}_results.pkl"), "wb") as f:
-        pickle.dump(results, f)
+    with open(os.path.join(RESULTS_PATH, f"{end_year}_results.json"), "wb") as f:
+        json.dump(results, f)

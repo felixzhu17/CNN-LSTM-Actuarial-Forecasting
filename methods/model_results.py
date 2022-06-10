@@ -1,7 +1,9 @@
 import pickle
+import json
 from .config import *
 
-best_models = pickle.load(open(MODEL_INFO, "rb"))
+# best_models = pickle.load(open(MODEL_INFO, "rb"))
+best_models = json.load(open(MODEL_INFO, "rb"))
 
 
 def get_best_model_name(end_year, target_variable, output_steps):

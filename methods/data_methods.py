@@ -18,6 +18,9 @@ class BaseResults:
     def __getitem__(self, item):
         return getattr(self, item)
 
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
 
 @dataclass
 class Dates:
@@ -28,6 +31,8 @@ class Dates:
     def __getitem__(self, item):
         return getattr(self, item)
 
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
 
 @dataclass
@@ -38,10 +43,12 @@ class TrainValTestData:
     test_Y: np.array
     val_X: np.array = None
     val_Y: np.array = None
+
     def __getitem__(self, item):
         return getattr(self, item)
 
-
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
 
 def prepare_model_data(
@@ -171,22 +178,22 @@ def split_data(
 
     if val_steps == 0:
         return TrainValTestData(
-            train_X = no_test_X,
-            train_Y = no_test_Y,
-            test_X = test_X,
-            test_Y = test_Y,
+            train_X=no_test_X,
+            train_Y=no_test_Y,
+            test_X=test_X,
+            test_Y=test_Y,
         )
-
 
     else:
         return TrainValTestData(
-            train_X = train_X,
-            train_Y = train_Y,
-            test_X = test_X,
-            test_Y = test_Y,
-            val_X = val_X,
-            val_Y = val_Y
+            train_X=train_X,
+            train_Y=train_Y,
+            test_X=test_X,
+            test_Y=test_Y,
+            val_X=val_X,
+            val_Y=val_Y,
         )
+
 
 def remove_outliers(data, val_steps, test_steps, remove_outlier=0.005):
     train = data.iloc[: -(val_steps + test_steps)]
@@ -257,3 +264,11 @@ def prepare_results(pred, actual, error_function, target_variables, Y_variables)
 
 def linear_error(pred_y, actual_y):
     return (pred_y - actual_y) ** 2
+
+
+def datetime_to_list(dates):
+    return list(dates.strftime("%Y-%m-%d"))
+
+
+def list_to_datetime(dates):
+    return pd.to_datetime(dates)

@@ -1,7 +1,14 @@
 import numpy as np
 from statsmodels.tsa.api import VAR
 from .config import *
-from .data_methods import prepare_results, split_Y, linear_error, BaseResults, Dates
+from .data_methods import (
+    prepare_results,
+    split_Y,
+    linear_error,
+    datetime_to_list,
+    BaseResults,
+    Dates,
+)
 from dataclasses import dataclass
 
 
@@ -17,6 +24,9 @@ class VARResults:
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
 
 def get_VAR_results(
@@ -155,7 +165,11 @@ def get_VAR_results(
             train=train_results,
             test=test_results,
             test_interval=test_interval,
-            dates=Dates(train=train_dates, test=test_dates, val=val_dates),
+            dates=Dates(
+                train=datetime_to_list(train_dates),
+                test=datetime_to_list(test_dates),
+                val=datetime_to_list(val_dates),
+            ),
             look_back=best_lag,
             val=val_results,
             val_interval=val_interval,
@@ -174,7 +188,9 @@ def get_VAR_results(
             train=train_results,
             test=test_results,
             test_interval=test_interval,
-            dates=Dates(train=train_dates, test=test_dates),
+            dates=Dates(
+                train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
+            ),
             look_back=best_lag,
         )
 

@@ -15,6 +15,9 @@ class Dataset:
     def __getitem__(self, item):
         return getattr(self, item)
 
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
+
 
 class Data_Prep:
     """Class to store everything related to the data used for testing. Contains the raw datasets, cleaned datasets and transformations for different target variables"""

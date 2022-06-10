@@ -1,7 +1,14 @@
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from .data_methods import prepare_results, split_Y, linear_error, BaseResults, Dates
+from .data_methods import (
+    prepare_results,
+    split_Y,
+    linear_error,
+    datetime_to_list,
+    BaseResults,
+    Dates,
+)
 from dataclasses import dataclass
 
 
@@ -12,6 +19,9 @@ class PredictorData:
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
 
 @dataclass
@@ -27,6 +37,9 @@ class NNResults:
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def __setitem__(self, key, value):
+        setattr(self, key, value)
 
 
 def get_NN_results(
@@ -138,7 +151,11 @@ def get_NN_results(
         output = NNResults(
             train=train_results,
             test=test_results,
-            dates=Dates(train=train_dates, test=test_dates, val=val_dates),
+            dates=Dates(
+                train=datetime_to_list(train_dates),
+                test=datetime_to_list(test_dates),
+                val=datetime_to_list(val_dates),
+            ),
             test_models=test_model_list,
             data=PredictorData(train=train_X, test=full_X),
             val=val_results,
@@ -151,7 +168,9 @@ def get_NN_results(
         output = NNResults(
             train=train_results,
             test=test_results,
-            dates=Dates(train=train_dates, test=test_dates),
+            dates=Dates(
+                train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
+            ),
             test_models=test_model_list,
             data=PredictorData(train=train_X, test=full_X),
         )
