@@ -29,6 +29,21 @@ class Dates:
         return getattr(self, item)
 
 
+
+@dataclass
+class TrainValTestData:
+    train_X: np.array
+    train_Y: np.array
+    test_X: np.array
+    test_Y: np.array
+    val_X: np.array = None
+    val_Y: np.array = None
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+
+
+
 def prepare_model_data(
     window,
     X_variables: list,
@@ -82,7 +97,7 @@ def create_principal_components(window, val_steps, test_steps):
 
 def prepare_X(
     window,
-    X_variables: str,
+    X_variables,
     val_steps,
     test_steps,
     number_of_pca: int = None,
@@ -155,23 +170,23 @@ def split_data(
     test_Y = array(y)[-test_steps:]
 
     if val_steps == 0:
-        return {
-            "train_X": no_test_X,
-            "train_Y": no_test_Y,
-            "test_X": test_X,
-            "test_Y": test_Y,
-        }
+        return TrainValTestData(
+            train_X = no_test_X,
+            train_Y = no_test_Y,
+            test_X = test_X,
+            test_Y = test_Y,
+        )
+
 
     else:
-        return {
-            "train_X": train_X,
-            "train_Y": train_Y,
-            "val_X": val_X,
-            "val_Y": val_Y,
-            "test_X": test_X,
-            "test_Y": test_Y,
-        }
-
+        return TrainValTestData(
+            train_X = train_X,
+            train_Y = train_Y,
+            test_X = test_X,
+            test_Y = test_Y,
+            val_X = val_X,
+            val_Y = val_Y
+        )
 
 def remove_outliers(data, val_steps, test_steps, remove_outlier=0.005):
     train = data.iloc[: -(val_steps + test_steps)]

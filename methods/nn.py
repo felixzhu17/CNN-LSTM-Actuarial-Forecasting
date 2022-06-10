@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class TrainTestData:
+class PredictorData:
     train: np.array
     test: np.array
 
@@ -20,7 +20,7 @@ class NNResults:
     test: BaseResults
     dates: Dates
     test_models: list
-    data: TrainTestData
+    data: PredictorData
     val: BaseResults = None
     val_loss: float = None
     val_models: list = None
@@ -140,7 +140,7 @@ def get_NN_results(
             test=test_results,
             dates=Dates(train=train_dates, test=test_dates, val=val_dates),
             test_models=test_model_list,
-            data=TrainTestData(train=train_X, test=full_X),
+            data=PredictorData(train=train_X, test=full_X),
             val=val_results,
             val_loss=val_loss,
             val_models=val_model_list,
@@ -153,7 +153,7 @@ def get_NN_results(
             test=test_results,
             dates=Dates(train=train_dates, test=test_dates),
             test_models=test_model_list,
-            data=TrainTestData(train=train_X, test=full_X),
+            data=PredictorData(train=train_X, test=full_X),
         )
     return output
 
