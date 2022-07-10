@@ -5,6 +5,7 @@ import scipy
 import os
 from .residual_bootstrap import get_prediction_intervals
 from .config import *
+import pandas as pd
 
 plt.rc("font", size=MEDIUM_SIZE)
 plt.rc("legend", fontsize=MEDIUM_SIZE)
@@ -66,13 +67,13 @@ def plot_results(
     if number_of_variables == 1:
         fig, axes = plt.subplots(nrows=1, ncols=1, dpi=120, figsize=FIG_SIZE)
         axes.plot(
-            result["dates"][period],
+            pd.to_datetime(result["dates"][period]),
             result[period]["actual_Y"][variables[0]],
             label="Actual",
             color="orange",
         )
         axes.plot(
-            result["dates"][period],
+            pd.to_datetime(result["dates"][period]),
             result[period]["pred_Y"][variables[0]],
             label="Predict",
             color="blue",
@@ -80,14 +81,14 @@ def plot_results(
         if show_interval:
             for alpha, colour in zip(alphas, COLOURS):
                 axes.plot(
-                    result["dates"][period],
+                    pd.to_datetime(result["dates"][period]),
                     intervals[alpha]["upper"][variables[0]],
                     label=alpha,
                     color=colour,
                     ls="dashed",
                 )
                 axes.plot(
-                    result["dates"][period],
+                    pd.to_datetime(result["dates"][period]),
                     intervals[alpha]["lower"][variables[0]],
                     color=colour,
                     ls="dashed",
@@ -112,13 +113,13 @@ def plot_results(
         )
         for i, ax in enumerate(axes.flatten()):
             ax.plot(
-                result["dates"][period],
+                pd.to_datetime(result["dates"][period]),
                 result[period]["actual_Y"][variables[i]],
                 label="Actual",
                 color="orange",
             )
             ax.plot(
-                result["dates"][period],
+                pd.to_datetime(result["dates"][period]),
                 result[period]["pred_Y"][variables[i]],
                 label="Predict",
                 color="blue",
@@ -127,14 +128,14 @@ def plot_results(
 
                 for alpha, colour in zip(alphas, COLOURS):
                     ax.plot(
-                        result["dates"][period],
+                        pd.to_datetime(result["dates"][period]),
                         intervals[alpha]["upper"][variables[i]],
                         label=alpha,
                         color=colour,
                         ls="dashed",
                     )
                     ax.plot(
-                        result["dates"][period],
+                        pd.to_datetime(result["dates"][period]),
                         intervals[alpha]["lower"][variables[i]],
                         color=colour,
                         ls="dashed",
@@ -155,13 +156,13 @@ def plot_results(
 def plot_fund_forecast(fund_forecast, period, alphas=[0.4, 0.1]):
     fig, axes = plt.subplots(nrows=1, ncols=1, dpi=120, figsize=FIG_SIZE)
     axes.plot(
-        fund_forecast["dates"],
+        pd.to_datetime(fund_forecast["dates"]),
         fund_forecast["point_value"],
         label="Predict",
         color="blue",
     )
     axes.plot(
-        fund_forecast["dates"],
+        pd.to_datetime(fund_forecast["dates"]),
         fund_forecast["actual_value"],
         label="Actual",
         color="orange",
@@ -169,14 +170,14 @@ def plot_fund_forecast(fund_forecast, period, alphas=[0.4, 0.1]):
 
     for alpha, colour in zip(alphas, COLOURS):
         axes.plot(
-            fund_forecast["dates"],
+            pd.to_datetime(fund_forecast["dates"]),
             fund_forecast["intervals"][alpha]["upper"],
             label=alpha,
             color=colour,
             ls="dashed",
         )
         axes.plot(
-            fund_forecast["dates"],
+            pd.to_datetime(fund_forecast["dates"]),
             fund_forecast["intervals"][alpha]["lower"],
             color=colour,
             ls="dashed",
@@ -217,13 +218,13 @@ def plot_example_results(
         variables = [a for a in variables if TARGET_VARIABLES[i] in a]
 
         ax.plot(
-            result["dates"]["test"],
+            pd.to_datetime(result["dates"]["test"]),
             result["test"]["actual_Y"][variables[0]],
             label="Actual",
             color="orange",
         )
         ax.plot(
-            result["dates"]["test"],
+            pd.to_datetime(result["dates"]["test"]),
             result["test"]["pred_Y"][variables[0]],
             label="Predict",
             color="blue",
@@ -231,14 +232,14 @@ def plot_example_results(
 
         for alpha, colour in zip(alphas, COLOURS):
             ax.plot(
-                result["dates"]["test"],
+                pd.to_datetime(result["dates"]["test"]),
                 intervals[alpha]["upper"][variables[0]],
                 label=alpha,
                 color=colour,
                 ls="dashed",
             )
             ax.plot(
-                result["dates"]["test"],
+                pd.to_datetime(result["dates"]["test"]),
                 intervals[alpha]["lower"][variables[0]],
                 color=colour,
                 ls="dashed",

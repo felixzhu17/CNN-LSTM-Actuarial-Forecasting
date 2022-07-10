@@ -10,12 +10,18 @@ from .data_methods import (
     Dates,
 )
 from dataclasses import dataclass
+from tensorflow.keras.optimizers import Adam
+from keras.layers.convolutional import Conv1D, MaxPooling1D
+from keras.layers import Dense, LSTM, Flatten, Dropout
+from keras.models import Sequential
 
 
 @dataclass
-class PredictorData:
-    train: np.array
-    test: np.array
+class FitData:
+    train_X: np.array
+    test_X: np.array
+    train_Y: np.array
+    test_Y: np.array
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -30,7 +36,7 @@ class NNResults:
     test: BaseResults
     dates: Dates
     test_models: list
-    data: PredictorData
+    data: FitData
     val: BaseResults = None
     val_loss: float = None
     val_models: list = None
@@ -73,7 +79,7 @@ def get_NN_results(
     for i in range(executions):
 
         # Retrain on training and validation
-        print(f"Fitting: {i+1}")
+        print(f"Fitting Train: {i+1}")
 
         temp_model = duplicate_model(model)
         _ = temp_model.fit(
@@ -120,7 +126,8 @@ def get_NN_results(
         val_model_list = []
         val_loss = []
 
-        for _ in range(executions):
+        for i in range(executions):
+            print(f"Fitting Val: {i+1}")
             temp_model = duplicate_model(model)
             val_history = temp_model.fit(
                 x=data["train_X"],
@@ -157,7 +164,7 @@ def get_NN_results(
                 val=datetime_to_list(val_dates),
             ),
             test_models=test_model_list,
-            data=PredictorData(train=train_X, test=full_X),
+            data=FitData(train_X=train_X, train_Y = train_Y, test_X=full_X, test_Y =full_Y),
             val=val_results,
             val_loss=val_loss,
             val_models=val_model_list,
@@ -172,7 +179,7 @@ def get_NN_results(
                 train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
             ),
             test_models=test_model_list,
-            data=PredictorData(train=train_X, test=full_X),
+            data=FitData(train_X=train_X, train_Y = train_Y, test_X=full_X, test_Y =full_Y),
         )
     return output
 
@@ -212,3 +219,5 @@ def duplicate_model(model):
     new_model.set_weights(model.get_weights())
     new_model.compile(optimizer=model.optimizer, loss=model.loss)
     return new_model
+
+

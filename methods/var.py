@@ -1,3 +1,4 @@
+from re import M
 import numpy as np
 from statsmodels.tsa.api import VAR
 from .config import *
@@ -14,11 +15,13 @@ from dataclasses import dataclass
 
 @dataclass
 class VARResults:
+    """Results of VAR model."""
     train: BaseResults
     test: BaseResults
     test_interval: dict
     dates: Dates
     look_back: int
+    model: VAR
     val: BaseResults = None
     val_interval: dict = None
 
@@ -37,11 +40,6 @@ def get_VAR_results(
     error_function=linear_error,
     val_steps: int = 0,
 ):
-    """
-    Fit Vector Autoregressios.
-    This model takes variables from the FRED Dataset and uses them in a VAR to predict future observations.
-    The function returns the actual value, predicted value and error of the test observation.
-    """
     data = VAR_array(data_info, test_steps, val_steps)
 
     # Pred Shapes
@@ -173,6 +171,7 @@ def get_VAR_results(
             look_back=best_lag,
             val=val_results,
             val_interval=val_interval,
+            model = train_model_fitted
         )
 
     else:
@@ -192,6 +191,7 @@ def get_VAR_results(
                 train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
             ),
             look_back=best_lag,
+            model = train_model_fitted
         )
 
     return output

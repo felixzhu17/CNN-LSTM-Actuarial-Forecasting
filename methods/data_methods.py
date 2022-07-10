@@ -268,7 +268,3 @@ def linear_error(pred_y, actual_y):
 
 def datetime_to_list(dates):
     return list(dates.strftime("%Y-%m-%d"))
-
-
-def list_to_datetime(dates):
-    return pd.to_datetime(dates)

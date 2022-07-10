@@ -1,2 +1,5 @@
 test_env
 *.pkl
+model_demo test.ipynb
+reconstruct_model.ipynb
+test.ipynb

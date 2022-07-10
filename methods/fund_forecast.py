@@ -2,6 +2,7 @@ import numpy as np
 from random import choice
 from numpy import quantile
 from dateutil.relativedelta import *
+import pandas as pd
 
 from .clean_data import Data_Prep
 from .residual_bootstrap import get_residuals
@@ -165,7 +166,7 @@ def get_fund_info(results, period="After GFC", use_residual=False, actual=False)
     variables_t_1 = data_prep.raw_data[TARGET_VARIABLES].loc[date_t_1]
     fund_info = reverse_transform(transformed_fund_info, variables_t, variables_t_1)
 
-    return fund_info, date_t
+    return fund_info, pd.to_datetime(date_t)
 
 
 def calculate_fund_value(fund_info, output_steps, date_t):

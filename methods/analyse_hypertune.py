@@ -201,7 +201,7 @@ def plot_parameter_results(results, aggregate, parameter):
             size=BIGGEST_SIZE,
         )
     )
-    fig.write_image(os.path.join(IMAGE_PATH, f"{aggregate}_{parameter}.png"))
+    #fig.write_image(os.path.join(IMAGE_PATH, f"{aggregate}_{parameter}.png"))
     fig.show()
     return
 
