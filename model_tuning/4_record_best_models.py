@@ -11,7 +11,7 @@ from methods.model_results import get_best_model_name, best_models
 from methods.nn import get_model_name
 from methods.data_methods import prepare_model_data
 from methods.clean_data import Data_Prep
-from tensorflow.keras.optimizers import Adam
+from keras.optimizers import Adam
 from keras.layers.convolutional import Conv1D, MaxPooling1D
 from keras.layers import Dense, LSTM, Flatten, Dropout
 from keras.models import Sequential

@@ -1,6 +1,6 @@
 from tensorflow.keras.optimizers import Adam
-from keras.layers.convolutional import Conv1D, MaxPooling1D
-from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout
+#from keras.layers.convolutional import Conv1D, MaxPooling1D
+from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout, Conv1D, MaxPooling1D
 from tensorflow.keras.models import Sequential
 import tensorflow.compat.v1.keras.backend as K
 import tensorflow as tf

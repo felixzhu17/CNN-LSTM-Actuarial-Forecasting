@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 # Paths
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -6,7 +7,6 @@ BASE_PATH = os.path.abspath(os.path.join(FILE_PATH, ".."))
 IMAGE_PATH = os.path.join(BASE_PATH, "images")
 RESULTS_PATH = os.path.join(BASE_PATH, "results")
 MODELS_PATH = os.path.join(BASE_PATH, "best_models")
-# MODEL_INFO = os.path.join(MODELS_PATH, "best_models_info.pkl")
 MODEL_INFO = os.path.join(MODELS_PATH, "best_models_info.json")
 TUNING_PATH = os.path.join(BASE_PATH, "Tuning")
 
@@ -48,6 +48,9 @@ BATCH_SIZE = int(TEST_STEPS / 2)
 REMOVE_OUTLIER = 0.05
 START_YEAR = 1960
 ALPHAS = [0.01, 0.05, 0.1, 0.4]
+
+transform_info = pd.read_csv(TRANSFORM_PATH)
+DETAILED_VARIABLE_MAPPING = {i:j for i,j in zip(transform_info['fred'], transform_info['description'])}
 
 
 # Plotting Parameters

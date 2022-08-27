@@ -1,8 +1,6 @@
-import pickle
 import json
 from .config import *
 
-# best_models = pickle.load(open(MODEL_INFO, "rb"))
 best_models = json.load(open(MODEL_INFO, "rb"))
 
 

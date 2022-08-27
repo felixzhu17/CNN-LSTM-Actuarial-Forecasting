@@ -9,9 +9,9 @@ sys.path.insert(0, BASE_PATH)
 
 from keras_tuner.engine.hyperparameters import HyperParameters
 from keras_tuner.tuners import Hyperband
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import Dense, LSTM, Flatten, Dropout, Conv1D, MaxPooling1D
-from tensorflow.keras.models import Sequential
+from keras.optimizers import Adam
+from keras.layers import Dense, LSTM, Flatten, Dropout, Conv1D, MaxPooling1D
+from keras.models import Sequential
 from methods.nn import get_model_name
 from methods.data_methods import prepare_model_data
 from methods.clean_data import Data_Prep
