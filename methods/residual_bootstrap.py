@@ -37,7 +37,7 @@ def get_residual_quantiles(NN_results):
 
 
 def get_residuals(NN_results):
-    if NN_results['val'] is not None:
+    if NN_results["val"] is not None:
         pred = NN_results["val"]["pred_Y"]
         actual = NN_results["val"]["actual_Y"]
     else:

@@ -164,7 +164,9 @@ def get_NN_results(
                 val=datetime_to_list(val_dates),
             ),
             test_models=test_model_list,
-            data=FitData(train_X=train_X, train_Y = train_Y, test_X=full_X, test_Y =full_Y),
+            data=FitData(
+                train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
+            ),
             val=val_results,
             val_loss=val_loss,
             val_models=val_model_list,
@@ -179,7 +181,9 @@ def get_NN_results(
                 train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
             ),
             test_models=test_model_list,
-            data=FitData(train_X=train_X, train_Y = train_Y, test_X=full_X, test_Y =full_Y),
+            data=FitData(
+                train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
+            ),
         )
     return output
 
@@ -219,5 +223,3 @@ def duplicate_model(model):
     new_model.set_weights(model.get_weights())
     new_model.compile(optimizer=model.optimizer, loss=model.loss)
     return new_model
-
-

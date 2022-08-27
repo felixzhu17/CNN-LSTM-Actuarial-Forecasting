@@ -50,7 +50,9 @@ START_YEAR = 1960
 ALPHAS = [0.01, 0.05, 0.1, 0.4]
 
 transform_info = pd.read_csv(TRANSFORM_PATH)
-DETAILED_VARIABLE_MAPPING = {i:j for i,j in zip(transform_info['fred'], transform_info['description'])}
+DETAILED_VARIABLE_MAPPING = {
+    i: j for i, j in zip(transform_info["fred"], transform_info["description"])
+}
 
 
 # Plotting Parameters

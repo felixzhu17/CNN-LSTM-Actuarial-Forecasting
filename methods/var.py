@@ -16,6 +16,7 @@ from dataclasses import dataclass
 @dataclass
 class VARResults:
     """Results of VAR model."""
+
     train: BaseResults
     test: BaseResults
     test_interval: dict
@@ -171,7 +172,7 @@ def get_VAR_results(
             look_back=best_lag,
             val=val_results,
             val_interval=val_interval,
-            model = train_model_fitted
+            model=train_model_fitted,
         )
 
     else:
@@ -191,7 +192,7 @@ def get_VAR_results(
                 train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
             ),
             look_back=best_lag,
-            model = train_model_fitted
+            model=train_model_fitted,
         )
 
     return output
