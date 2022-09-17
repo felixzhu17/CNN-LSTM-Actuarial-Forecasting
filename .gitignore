@@ -3,3 +3,4 @@ test_env
 model_demo test.ipynb
 reconstruct_model.ipynb
 test.ipynb
+setup_venv.bat
