@@ -67,7 +67,6 @@ def get_shap_object(variable):
     )
     return NNForecastShap(
         NN_results.test_models[0],
-        NN_results.data.train_X,
         NN_results.data.test_X,
         VARIABLES_MAP[dataset["target_variables"][0]],
         model_details,

@@ -12,3 +12,4 @@ numpy==1.21.6
 pandas==1.1.5
 nbformat==4.2.0
 tensorflow==1.14.0 
+kaleido
