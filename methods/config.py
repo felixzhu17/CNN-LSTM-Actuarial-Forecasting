@@ -6,8 +6,7 @@ FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(FILE_PATH, ".."))
 IMAGE_PATH = os.path.join(BASE_PATH, "images")
 RESULTS_PATH = os.path.join(BASE_PATH, "results")
-MODELS_PATH = os.path.join(BASE_PATH, "best_models")
-MODEL_INFO = os.path.join(MODELS_PATH, "best_models_info.json")
+MODEL_INFO = os.path.join(RESULTS_PATH, "best_models_info.json")
 TUNING_PATH = os.path.join(BASE_PATH, "Tuning")
 
 # Variable Names

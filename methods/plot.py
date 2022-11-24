@@ -211,6 +211,7 @@ def plot_example_results(
             intervals = get_prediction_intervals(result)
 
         elif model == "Var":
+            alphas = [str(i) for i in alphas]
             result = target["Var_results"]
             intervals = result["test_interval"]
 
