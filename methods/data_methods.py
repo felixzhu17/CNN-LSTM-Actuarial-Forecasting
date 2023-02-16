@@ -87,7 +87,11 @@ def create_principal_components(window, val_steps, test_steps):
     scaler = StandardScaler()
 
     # Fit PCA on Training Only
-    fit_pca_data = pca_data.iloc[: -(val_steps + test_steps)]
+   
+    if val_steps + test_steps > 0:
+        fit_pca_data = pca_data.iloc[: -(val_steps + test_steps)]
+    else:
+        fit_pca_data = pca_data
     scaled_fit_pca_data = scaler.fit_transform(fit_pca_data)
     pca = pca.fit(scaled_fit_pca_data)
 

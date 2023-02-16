@@ -36,6 +36,7 @@ LOOK_BACK_YEARS = [2, 1, 0.25]
 FREQUENCY = "md"
 TEST_YEARS = 2
 VAL_YEARS = 4
+LATEST_DATA_PATH = f"Data/latest_fred{FREQUENCY}.csv"
 DATA_PATH = f"Data/fred{FREQUENCY}.csv"
 TRANSFORM_PATH = f"Data/fred{FREQUENCY}_description.csv"
 NA_CUTOFF = 34
