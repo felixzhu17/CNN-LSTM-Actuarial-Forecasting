@@ -211,7 +211,7 @@ for end_year in PERIODS_MAP.values():
                             test_steps=TEST_STEPS,
                             remove_outlier=REMOVE_OUTLIER,
                             number_of_pca=number_of_pca,
-                            target_variables=dataset["target_variables"],
+                            target_variables=TARGET_VARIABLES,
                         )
 
                         # Adjust size to match batch
