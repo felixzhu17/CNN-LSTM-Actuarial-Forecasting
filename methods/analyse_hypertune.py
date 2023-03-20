@@ -103,7 +103,8 @@ def hypertune_best_fixed_params(results, paramater, parameter_label):
         0
     )
 
-    # plot_3d_results(best_results, parameter_label)
+    fig = plot_3d_results(best_results, parameter_label)
+    fig.write_image(os.path.join(IMAGE_PATH, f"{parameter_label}.png"))
 
     variable_results = best_results.groupby(["Variable"]).mean().transpose()
     period_results = best_results.groupby(["Period"]).mean().transpose()
@@ -156,7 +157,8 @@ def hypertune_best_variable_params(results, paramater, parameter_label, ignore_0
         0
     )
 
-    # plot_3d_results(best_results, parameter_label)
+    fig = plot_3d_results(best_results, parameter_label)
+    fig.write_image(os.path.join(IMAGE_PATH, f"{parameter_label}.png"))
 
     if ignore_0:
         variable_results = (
@@ -207,19 +209,21 @@ def plot_parameter_results(results, aggregate, parameter):
 
 
 def plot_3d_results(results, parameter):
-    fig = px.scatter_3d(
+
+    fig = px.scatter(
         results,
-        x="Variable",
-        y="Output Steps",
-        z=parameter,
+        x="Output Steps",
+        y=parameter,
         color="Variable",
-        width=1250,
-        height=750,
+        facet_col="Variable",
+        facet_row="Period",
     )
     fig.update_layout(
+        width=1500,
+        height=1500,
         font=dict(
             size=BIGGEST_SIZE,
-        )
+        ),
     )
     fig.show()
-    return
+    return fig

@@ -104,7 +104,7 @@ class Data_Prep:
                 # case 7 First difference of percent change:
                 # (x(t)/x(t-1)-1)-(x(t-1)/x(t-2)-1)
                 temp_data[i] = temp_data[i].pct_change().diff()
-        
+
         self.transformed_data = temp_data
 
     def filter_data(self, start=None, end=None):

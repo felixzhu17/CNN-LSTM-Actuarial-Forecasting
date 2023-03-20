@@ -35,10 +35,10 @@ class NNResults:
     train: BaseResults
     test: BaseResults
     dates: Dates
-    test_models: list
     data: FitData
     val: BaseResults = None
     val_loss: float = None
+    test_models: list = None
     val_models: list = None
 
     def __getitem__(self, item):

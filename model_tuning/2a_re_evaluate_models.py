@@ -1,7 +1,6 @@
 import pickle
 import os
 import sys
-import json
 
 FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(FILE_PATH, ".."))
@@ -16,12 +15,17 @@ from methods.model_results import get_model_details
 from methods.build_nn_model import build_model
 
 
-results = []
 for end_year in PERIODS_MAP.values():
     for variable in TARGET_VARIABLES:
+        results = []
+        NAME = f"new_results_{end_year}_{variable}.pkl"
+        x = os.listdir(RESULTS_PATH)
+        if NAME in x:
+            print(f"{NAME} exists")
+        else:
             for output_steps in OUTPUT_STEPS:
 
-                
+                print(f"Running {end_year} {variable} {output_steps}")
                 data_prep = Data_Prep(DATA_PATH, TRANSFORM_PATH)
                 data_prep.transform_to_supervised_learning(
                     NA_CUTOFF,
@@ -32,7 +36,7 @@ for end_year in PERIODS_MAP.values():
                 )
                 dataset = data_prep.supervised_dataset
                 full_dataset = dataset["transformed_data"]
- 
+
                 model_details = get_model_details(end_year, variable, output_steps)
                 look_back_steps = int(model_details["look_back_years"] * 12)
                 number_of_pca = model_details["number_of_pca"]
@@ -49,12 +53,8 @@ for end_year in PERIODS_MAP.values():
                 )
 
                 # Adjust size to match batch
-                data["train_X"] = data["train_X"][
-                    len(data["train_X"]) % BATCH_SIZE :
-                ]
-                data["train_Y"] = data["train_Y"][
-                    len(data["train_Y"]) % BATCH_SIZE :
-                ]
+                data["train_X"] = data["train_X"][len(data["train_X"]) % BATCH_SIZE :]
+                data["train_Y"] = data["train_Y"][len(data["train_Y"]) % BATCH_SIZE :]
 
                 model = build_model(data, model_details)
 
@@ -126,6 +126,5 @@ for end_year in PERIODS_MAP.values():
                 }
 
                 results.append(info)
-
-with open(os.path.join(RESULTS_PATH, f"new_results.json"), "wb") as f:
-    json.dump(results, f)
+            with open(os.path.join(RESULTS_PATH, NAME), "wb") as f:
+                pickle.dump(results, f)

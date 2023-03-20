@@ -25,9 +25,7 @@ class NNForecastShap:
 
     def get_shap_values(self, model):
         explainer = shap.DeepExplainer(model, self.data)
-        self.shap_values = explainer.shap_values(self.data)[0].reshape(
-            self.data_shape
-        )
+        self.shap_values = explainer.shap_values(self.data)[0].reshape(self.data_shape)
         self.shap_values = pd.DataFrame(self.shap_values, columns=self.col_names)
 
     def get_data(self):
@@ -65,7 +63,8 @@ class NNForecastShap:
             xaxis_title="Importance",
             yaxis_title="Features",
             plot_bgcolor="white",
-            *args, **kwargs
+            *args,
+            **kwargs,
         )
         return fig
 
@@ -77,7 +76,8 @@ class NNForecastShap:
             xaxis_title=col,
             yaxis_title="SHAP Value",
             plot_bgcolor="white",
-            *args, **kwargs
+            *args,
+            **kwargs,
         )
         return fig
 
