@@ -1,3 +1,5 @@
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4449894
+
 # Hypertune Results
 Run hypertune_results.ipynb to see a summary of hypertune results
 
