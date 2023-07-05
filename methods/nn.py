@@ -60,6 +60,7 @@ def get_NN_results(
     executions=5,
     error_function=linear_error,
     data_name="transformed_data",
+    return_model = True,
 ):
     """Fits the Neural Network on training set and calculates error on training, validation and test set. Best hyperparameters are sorted by validation error in .analyse_hypertune"""
 
@@ -163,13 +164,13 @@ def get_NN_results(
                 test=datetime_to_list(test_dates),
                 val=datetime_to_list(val_dates),
             ),
-            test_models=test_model_list,
+            test_models=test_model_list if return_model else None,
             data=FitData(
                 train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
             ),
             val=val_results,
             val_loss=val_loss,
-            val_models=val_model_list,
+            val_models=val_model_list if return_model else None,
         )
 
     else:
@@ -180,7 +181,7 @@ def get_NN_results(
             dates=Dates(
                 train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
             ),
-            test_models=test_model_list,
+            test_models=test_model_list if return_model else None,
             data=FitData(
                 train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
             ),

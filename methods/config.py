@@ -33,6 +33,13 @@ PERIODS_MAP = {
     "During GFC": 2010,
     "Before GFC": 2006,
 }
+
+LONG_HORIZON_COMBINATIONS = {
+    60: [2006, 2010, 2017],
+    120: [2006, 2010],
+    240: [2006]
+}
+
 REVERSE_PERIOD_MAP = {PERIODS_MAP[k]: k for k in PERIODS_MAP}
 OUTPUT_STEPS = [1, 3, 6, 12, 24, 60, 120, 240]
 NUMBER_OF_PCAS = [0, 5, 20, 60, 120]
