@@ -6,8 +6,14 @@ FILE_PATH = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(FILE_PATH, ".."))
 IMAGE_PATH = os.path.join(BASE_PATH, "images")
 RESULTS_PATH = os.path.join(BASE_PATH, "results")
-MODEL_INFO = os.path.join(RESULTS_PATH, "best_models_info.json")
+MODEL_INFO = os.path.join(RESULTS_PATH, "models_info.json")
 TUNING_PATH = os.path.join(BASE_PATH, "Tuning")
+RAW_DATA_PATH = os.path.join(BASE_PATH, "Data")
+
+TUNING_TUNER_PATH = os.path.join(TUNING_PATH, "tuning")
+TUNING_PARAMS_PATH = os.path.join(TUNING_PATH, "params")
+TUNING_MODELS_PATH = os.path.join(TUNING_PATH, "models")
+TUNING_RESULTS_PATH = os.path.join(RESULTS_PATH, "tuning_results")
 
 # Variable Names
 inflation = "CPIAUCSL"
@@ -28,7 +34,7 @@ PERIODS_MAP = {
     "Before GFC": 2006,
 }
 REVERSE_PERIOD_MAP = {PERIODS_MAP[k]: k for k in PERIODS_MAP}
-OUTPUT_STEPS = [1, 3, 6, 12, 24]
+OUTPUT_STEPS = [1, 3, 6, 12, 24, 60, 120, 240]
 NUMBER_OF_PCAS = [0, 5, 20, 60, 120]
 LOOK_BACK_YEARS = [2, 1, 0.25]
 
@@ -36,9 +42,9 @@ LOOK_BACK_YEARS = [2, 1, 0.25]
 FREQUENCY = "md"
 TEST_YEARS = 2
 VAL_YEARS = 4
-LATEST_DATA_PATH = f"Data/latest_fred{FREQUENCY}.csv"
-DATA_PATH = f"Data/fred{FREQUENCY}.csv"
-TRANSFORM_PATH = f"Data/fred{FREQUENCY}_description.csv"
+LATEST_DATA_PATH = os.path.join(RAW_DATA_PATH,f"latest_fred{FREQUENCY}.csv")
+DATA_PATH = os.path.join(RAW_DATA_PATH,f"fred{FREQUENCY}.csv")
+TRANSFORM_PATH = os.path.join(RAW_DATA_PATH,f"fred{FREQUENCY}_description.csv")
 NA_CUTOFF = 34
 SKIP_PERIODS = 1
 EPOCHS = 25

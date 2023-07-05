@@ -5,3 +5,6 @@ reconstruct_model.ipynb
 test.ipynb
 setup_venv.bat
 __pycache__
+Tuning
+results/archive
+results/tuning_results
