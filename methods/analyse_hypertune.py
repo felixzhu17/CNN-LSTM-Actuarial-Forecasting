@@ -44,13 +44,13 @@ def aggregate_hypertune_results(best_results):
     aggregate_results = pd.DataFrame(index=OUTPUT_STEPS, columns=AGGREGATE_COLUMNS)
     for output_steps in OUTPUT_STEPS:
         for target_variable in TARGET_VARIABLES:
-            aggregate_results.loc[(output_steps), (target_variable, "Val")] = np.mean(
+            aggregate_results.loc[(output_steps), (target_variable, "Val")] = np.nanmean(
                 [
                     best_results.loc[(output_steps), (i, target_variable, "Val")]
                     for i in PERIODS_MAP.keys()
                 ]
             )
-            aggregate_results.loc[(output_steps), (target_variable, "Test")] = np.mean(
+            aggregate_results.loc[(output_steps), (target_variable, "Test")] = np.nanmean(
                 [
                     best_results.loc[(output_steps), (i, target_variable, "Test")]
                     for i in PERIODS_MAP.keys()
