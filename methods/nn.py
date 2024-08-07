@@ -48,6 +48,7 @@ class NNResults:
         setattr(self, key, value)
 
 
+
 def get_NN_results(
     model,
     data,
@@ -60,89 +61,100 @@ def get_NN_results(
     executions=5,
     error_function=linear_error,
     data_name="transformed_data",
-    return_model = True,
+    return_model=True,
 ):
-    """Fits the Neural Network on training set and calculates error on training, validation and test set. Best hyperparameters are sorted by validation error in .analyse_hypertune"""
+    """Fits the Neural Network on training set and calculates error on training, validation, and test set. Best hyperparameters are sorted by validation error in .analyse_hypertune"""
 
-    if val_steps == 0:
-        train_X = data["train_X"]
-        train_Y = data["train_Y"]
-    else:
-        train_X = np.concatenate((data["train_X"], data["val_X"]), axis=0)
-        train_Y = np.concatenate((data["train_Y"], data["val_Y"]), axis=0)
+    train_X = data["train_X"]
+    train_Y = data["train_Y"]
 
     full_X = np.concatenate((train_X, data["test_X"]), axis=0)
     full_Y = np.concatenate((train_Y, data["test_Y"]), axis=0)
 
-    predictions = []
-    test_model_list = []
+    if val_steps == 0:
+        predictions = []
+        test_model_list = []
+        for i in range(executions):
+            print(f"Fitting: {i + 1}")
+            temp_model = duplicate_model(model)
+            _ = temp_model.fit(
+                x=train_X,
+                y=train_Y,
+                verbose=0,
+                epochs=epochs,
+                batch_size=batch_size,
+                callbacks=[tf.keras.callbacks.EarlyStopping("loss", patience=5)],
+            )
+            predictions.append(temp_model.predict(full_X, batch_size=batch_size))
+            test_model_list.append(temp_model)
 
-    for i in range(executions):
 
-        # Retrain on training and validation
-        print(f"Fitting Train: {i+1}")
+        full_pred_Y = np.mean(predictions, axis=0)
 
-        temp_model = duplicate_model(model)
-        _ = temp_model.fit(
-            x=train_X,
-            y=train_Y,
-            verbose=0,
-            epochs=epochs,
-            batch_size=batch_size,
-            callbacks=[tf.keras.callbacks.EarlyStopping("loss", patience=5)],
+        pred_Y = split_Y(full_pred_Y, val_steps, test_steps)
+        actual_Y = split_Y(full_Y, val_steps, test_steps)
+
+        data_length = len(data_info[data_name])
+
+        train_results = prepare_results(
+            pred_Y["train"],
+            actual_Y["train"],
+            error_function,
+            data_info["target_variables"],
+            data_info["Y_variables"],
         )
-        predictions.append(temp_model.predict(full_X, batch_size=batch_size))
-        test_model_list.append(temp_model)
+        train_dates = data_info[data_name].index[
+            look_back - 1: (data_length - test_steps - val_steps)
+        ]
+        train_dates = train_dates[-len(data["train_X"]):]
+        test_dates = data_info[data_name].index[(data_length - test_steps):]
 
-    full_pred_Y = np.mean(predictions, axis=0)
+        test_results = prepare_results(
+            pred_Y["test"],
+            actual_Y["test"],
+            error_function,
+            data_info["target_variables"],
+            data_info["Y_variables"],
+        )
 
-    pred_Y = split_Y(full_pred_Y, val_steps, test_steps)
-    actual_Y = split_Y(full_Y, val_steps, test_steps)
-
-    data_length = len(data_info[data_name])
-
-    train_results = prepare_results(
-        pred_Y["train"],
-        actual_Y["train"],
-        error_function,
-        data_info["target_variables"],
-        data_info["Y_variables"],
-    )
-    train_dates = data_info[data_name].index[
-        look_back - 1 : (data_length - test_steps - val_steps)
-    ]
-    train_dates = train_dates[-len(data["train_X"]) :]
-    test_dates = data_info[data_name].index[(data_length - test_steps) :]
-
-    test_results = prepare_results(
-        pred_Y["test"],
-        actual_Y["test"],
-        error_function,
-        data_info["target_variables"],
-        data_info["Y_variables"],
-    )
-
-    if val_steps > 0:
-
+        output = NNResults(
+            train=train_results,
+            test=test_results,
+            dates=Dates(
+                train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
+            ),
+            test_models=test_model_list if return_model else None,
+            data=FitData(
+                train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
+            ),
+        )
+    else:
         val_model_list = []
-        val_loss = []
+        val_loss_list = []
 
         for i in range(executions):
-            print(f"Fitting Val: {i+1}")
+            print(f"Fitting Val: {i + 1}")
             temp_model = duplicate_model(model)
             val_history = temp_model.fit(
-                x=data["train_X"],
-                y=data["train_Y"],
+                x=train_X,
+                y=train_Y,
                 verbose=0,
                 epochs=epochs,
                 batch_size=batch_size,
                 validation_data=(data["val_X"], data["val_Y"]),
-                callbacks=[tf.keras.callbacks.EarlyStopping("loss", patience=5)],
+                callbacks=[tf.keras.callbacks.EarlyStopping("val_loss", patience=5)],
             )
-            val_loss.append(val_history.history["val_loss"][-1])
+            val_loss_list.append(val_history.history["val_loss"][-1])
             val_model_list.append(temp_model)
 
-        val_loss = np.mean(val_loss)
+        best_val_index = np.argmin(val_loss_list)
+        best_val_model = val_model_list[best_val_index]
+        best_val_predictions = best_val_model.predict(full_X, batch_size=batch_size)
+
+        pred_Y = split_Y(best_val_predictions, val_steps, test_steps)
+        actual_Y = split_Y(full_Y, val_steps, test_steps)
+
+        val_loss = val_loss_list[best_val_index]
         val_results = prepare_results(
             pred_Y["val"],
             actual_Y["val"],
@@ -151,10 +163,29 @@ def get_NN_results(
             data_info["Y_variables"],
         )
         val_dates = data_info[data_name].index[
-            (len(data_info[data_name]) - test_steps - val_steps) : (
-                data_length - test_steps
-            )
+            (len(data_info[data_name]) - test_steps - val_steps): (data_length - test_steps)
         ]
+
+        train_results = prepare_results(
+            pred_Y["train"],
+            actual_Y["train"],
+            error_function,
+            data_info["target_variables"],
+            data_info["Y_variables"],
+        )
+        train_dates = data_info[data_name].index[
+            look_back - 1: (data_length - test_steps - val_steps)
+        ]
+        train_dates = train_dates[-len(data["train_X"]):]
+        test_dates = data_info[data_name].index[(data_length - test_steps):]
+
+        test_results = prepare_results(
+            pred_Y["test"],
+            actual_Y["test"],
+            error_function,
+            data_info["target_variables"],
+            data_info["Y_variables"],
+        )
 
         output = NNResults(
             train=train_results,
@@ -170,24 +201,10 @@ def get_NN_results(
             ),
             val=val_results,
             val_loss=val_loss,
-            val_models=val_model_list if return_model else None,
+            val_models=[best_val_model] if return_model else None,
         )
 
-    else:
-
-        output = NNResults(
-            train=train_results,
-            test=test_results,
-            dates=Dates(
-                train=datetime_to_list(train_dates), test=datetime_to_list(test_dates)
-            ),
-            test_models=test_model_list if return_model else None,
-            data=FitData(
-                train_X=train_X, train_Y=train_Y, test_X=full_X, test_Y=full_Y
-            ),
-        )
     return output
-
 
 def get_model_name(
     end_year,
