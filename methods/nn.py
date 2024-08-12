@@ -71,6 +71,8 @@ def get_NN_results(
     full_X = np.concatenate((train_X, data["test_X"]), axis=0)
     full_Y = np.concatenate((train_Y, data["test_Y"]), axis=0)
 
+    data_length = len(data_info[data_name])
+
     if val_steps == 0:
         predictions = []
         test_model_list = []
@@ -94,8 +96,7 @@ def get_NN_results(
         pred_Y = split_Y(full_pred_Y, val_steps, test_steps)
         actual_Y = split_Y(full_Y, val_steps, test_steps)
 
-        data_length = len(data_info[data_name])
-
+    
         train_results = prepare_results(
             pred_Y["train"],
             actual_Y["train"],
@@ -163,7 +164,7 @@ def get_NN_results(
             data_info["Y_variables"],
         )
         val_dates = data_info[data_name].index[
-            (len(data_info[data_name]) - test_steps - val_steps): (data_length - test_steps)
+            (data_length - test_steps - val_steps): (data_length - test_steps)
         ]
 
         train_results = prepare_results(
